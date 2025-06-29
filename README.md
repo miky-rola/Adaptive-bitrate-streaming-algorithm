@@ -15,12 +15,6 @@ This project implements a simplified **Adaptive Bitrate Streaming (ABR)** algori
 - Basic CLI output for inspection
 - Unit tests for core logic
 
-## Tech Stack
-
-- **Rust** for safe and performant system-level logic
-- Uses `std::time` for timing and durations
-- In-memory simulation (no actual media involved)
-
 ## Structure
 
 - `QualityLevel`: Defines the video quality (bitrate, resolution, codec)
