@@ -2,7 +2,3 @@
 name = "Adaptive-bitrate-streaming-algorithm"
 version = "0.1.0"
 edition = "2024"
-
-[dependencies]
-reqwest = "0.12.20"
-tokio = "1.45.1"
