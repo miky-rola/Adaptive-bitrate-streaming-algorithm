@@ -103,7 +103,6 @@ impl AdaptiveBitrateStreamer {
         }
     }
 
-    /// Update buffer level after playback consumption
     pub fn update_buffer_consumption(&mut self, consumed_duration: Duration) {
         if self.buffer_state.current_level >= consumed_duration {
             self.buffer_state.current_level -= consumed_duration;
@@ -133,7 +132,6 @@ impl AdaptiveBitrateStreamer {
 
     fn estimate_bandwidth(&self) -> u32 {
         if self.bandwidth_history.len() < self.min_bandwidth_samples {
-            // Not enough samples, use conservative estimate based on current quality
             return self.quality_levels[self.current_quality].bitrate / 8; // Convert to bytes/sec
         }
 
@@ -141,7 +139,6 @@ impl AdaptiveBitrateStreamer {
         let weighted_average: u32 = self.calculate_weighted_average_bandwidth();
         let percentile_estimate: u32 = self.calculate_percentile_bandwidth(0.2); // 20th percentile for conservative estimate
         
-        // Use the minimum of these estimates for robustness
         harmonic_mean.min(weighted_average).min(percentile_estimate)
     }
 
@@ -213,7 +210,6 @@ impl AdaptiveBitrateStreamer {
     fn find_suitable_quality(&self, available_bandwidth: u32) -> usize {
         let safe_bandwidth: u32 = (available_bandwidth as f64 * self.safety_factor as f64) as u32;
         
-        // Find the highest quality that fits within safe bandwidth
         for (i, quality) in self.quality_levels.iter().enumerate().rev() {
             let required_bandwidth: u32 = quality.bitrate / 8; // Convert to bytes/sec
             if required_bandwidth <= safe_bandwidth {
@@ -221,7 +217,6 @@ impl AdaptiveBitrateStreamer {
             }
         }
         
-        // If no quality fits, return the lowest quality
         0
     }
 
@@ -318,20 +313,20 @@ fn main() {
 
     println!("\nSimulating segment downloads...");
     
-    // Simulate a fast download (good network)
     streamer.record_segment_download(
         1_000_000, // 1MB segment
         Duration::from_millis(800), // Downloaded in 800ms
         Duration::from_secs(4), // 4-second segment
     );
     
+    // strong network
     let next_quality = streamer.get_next_quality();
     println!("After fast download - Next quality: {} (estimated bandwidth: {} kbps)", 
         next_quality,
         streamer.get_estimated_bandwidth() * 8 / 1000
     );
     
-    // Simulate a slow download (poor network)
+    // poor network
     streamer.record_segment_download(
         500_000, // 500KB segment
         Duration::from_secs(3), // Downloaded in 3 seconds
@@ -368,7 +363,6 @@ mod tests {
     fn test_bandwidth_recording() {
         let mut streamer = AdaptiveBitrateStreamer::new(create_test_quality_levels());
         
-        // Record a segment download
         streamer.record_segment_download(
             1_000_000, // 1MB segment
             Duration::from_secs(1), // Downloaded in 1 second
