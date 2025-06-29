@@ -1,5 +1,8 @@
 
-/// this here is to test my implementation of 
+/// this here is to test my knowledge on adaptive bitrate streaming
+
+
+
 use std::collections::VecDeque;
 use std::time::{Duration, Instant};
 
@@ -34,7 +37,6 @@ pub struct AdaptiveBitrateStreamer {
     buffer_state: BufferState,
     segment_history: VecDeque<SegmentInfo>,
     
-    // Algorithm parameters
     bandwidth_window: Duration,
     safety_factor: f32,
     buffer_panic_threshold: Duration,
